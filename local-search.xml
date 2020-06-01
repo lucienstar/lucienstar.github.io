@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>前端之外</title>
+    <link href="/2019/02/28/outFE/"/>
+    <url>/2019/02/28/outFE/</url>
+    
+    <content type="html"><![CDATA[<p>　　最近看到阮一峰老师分享的一篇文章<a href="http://rubyhacker.com/blog2/20150917.html" target="_blank" rel="noopener">失传的计算机科学</a>深有同感，如今越来越标准化的开发方式和工具使得开发越来越容易，你很难想象一个使用<code>Vue-Cli</code>工具的前端开发居然不明白<code>webpack</code>是怎么工作的。更奇怪的是，他们任然能够出色的完成需求。<br>软件的开发成本理应越来越低，软件开发从一个刀耕火种的年代一路走到今天，前辈们总结出来的经验和智慧变成工具，从一开始的拖拖拽拽到现在机器学习，工具已经可以强大到可以替代大部分重复劳动的工种。<br>　　但是问题就在这里，现在的工具还不够成熟。<br>　　你无法忽视网络协议，无法忽视性能，无法忽视安全。<br>　　如果有一天，工具能够解决这些问题了。我们应该感觉到开心，大可不必担心自己被替代。<br>因为，可以转行做产品经理啊。(｡･∀･)ﾉﾞ&quot;</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>技术的思考</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  
+</search>
