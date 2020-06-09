@@ -4,9 +4,32 @@
   
   
   <entry>
+    <title>HTTP协议是什么以及不是什么</title>
+    <link href="/2020/06/09/HTTP%E5%8D%8F%E8%AE%AE%E6%98%AF%E4%BB%80%E4%B9%88%E4%BB%A5%E5%8F%8A%E4%B8%8D%E6%98%AF%E4%BB%80%E4%B9%88/"/>
+    <url>/2020/06/09/HTTP%E5%8D%8F%E8%AE%AE%E6%98%AF%E4%BB%80%E4%B9%88%E4%BB%A5%E5%8F%8A%E4%B8%8D%E6%98%AF%E4%BB%80%E4%B9%88/</url>
+    
+    <content type="html"><![CDATA[<h3 id="HTTP协议是什么？"><a href="#HTTP协议是什么？" class="headerlink" title="HTTP协议是什么？"></a>HTTP协议是什么？</h3><p>　　超文本传输协议。是一个用于传输超媒体文档（例如 HTML）的<strong>应用层</strong>协议。<strong>是纯粹的文本协议</strong>，<strong>可以在任何可靠的传输层上使用</strong>。（ HTTP/2 基于 Google 的 SPDY 协议，HTTP/3 基于 Google 的 QUIC 协议），但是通常是基于 HTTP/IP 层，对 TCP 协议来说，TCP 协议是一条双向的通讯通道，HTTP 如果建立在 TCP 的基础上，那么就遵循Request-Response 的模式。也就是说通讯必定是由用户代理首先发起的。</p><p><img src="/imges/HTTP&layers.png" srcset="/img/loading.gif" alt=""><br>　　HTTP被设计于20世纪90年代初期，在最开始设计的时候，只是用于从服务器获取文档，所以只定义了 <code>GET</code> 操作，在后来的日子里，随着计算机媒体的技术的发展，出现了 <code>JPEG</code>，<code>MP3</code> 音乐等，于是有了 <code>HTTP/1.0</code> 。  </p><p>　　<code>HTTP/1.0</code>形式上已经和现在的 <code>HTTP/1.1</code>差别不大了。  </p><ol><li>增加了 HEAD、POST 等新方法；</li><li>增加了响应状态码，标记可能的错误原因；</li><li>引入了协议版本号概念；</li><li>引入了 HTTP Header（头部）的概念，让 HTTP 处理请求和响应更加灵活；</li><li><strong>传输的数据</strong>不再仅限于文本（只是传输的数据不仅限于文本）。</li></ol><p>　　但是这个时候<code>HTTP</code>还是社区维护的状态，大家随意修改。浏览器各自有各自的实现方式，直到浏览器大战的95年后，<code>HTTP</code> 才正式有了一份文档, <a href="https://tools.ietf.org/html/rfc2616" target="_blank" rel="noopener">编号为 RFC 2616</a>。</p><p>　　从版本号我们就可以看到<code>HTTP/1.1</code> 是对 <code>HTTP/1.0</code>的小幅度修正。但是它是一份正式的标准，也就是说，大部分正规的软件会参考标准来做东西（我没有说IE，真的）。  </p><p>　　HTTP/1.1 主要的变更点有：  </p><ol><li>增加了 PUT、DELETE 等新的方法；</li><li>增加了缓存管理和控制；</li><li>明确了连接管理，允许持久连接；</li><li>允许响应数据分块（chunked），利于传输大文件；</li><li>强制要求 Host 头，让互联网主机托管成为可能。</li></ol><p>　　除此之外，<code>HTTP</code> 协议还规定报文必须有 <code>header</code>，但可以没有 <code>body</code>，而且在<code>header</code> 之后必须要有一个“空行”，也就是“CRLF”，十六进制的“0D0A”。如下图所示：<br><img src="/imges/httpmessage.png" srcset="/img/loading.gif" alt=""> </p><p>　　我们可以使用<code>Node</code>来模拟下用户代理已经服务器。</p><ul><li>client端<pre><code class="hljs javascript"><span class="hljs-comment">// client</span><span class="hljs-comment">// 创建一个TCP链接后，使用纯文本传输内容，这就是HTTP协议</span><span class="hljs-keyword">const</span> net = <span class="hljs-built_in">require</span>(<span class="hljs-string">'net'</span>);<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">transforHeader</span>(<span class="hljs-params">headers</span>) </span>&#123;    <span class="hljs-keyword">let</span> test = <span class="hljs-built_in">Object</span>.keys(headers).map(<span class="hljs-function">(<span class="hljs-params">key</span>) =&gt;</span> &#123;        <span class="hljs-keyword">return</span> key + <span class="hljs-string">': '</span> + headers[key]    &#125;).join(<span class="hljs-string">'\r\n'</span>)    <span class="hljs-keyword">return</span> test;&#125;<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">request</span>(<span class="hljs-params">option, cb1, cb2</span>) </span>&#123;    <span class="hljs-keyword">let</span> client = net.createConnection(&#123;        port: option.port || <span class="hljs-number">8080</span>    &#125;, () =&gt; &#123;        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'服务器链接成功'</span>)        client.write(option.method + <span class="hljs-string">' / HTTP/1.1\r\n'</span> + transforHeader(option.headers) + <span class="hljs-string">'\r\n\r\n'</span> + <span class="hljs-string">'123'</span>);    &#125;);    client.on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data</span>) </span>&#123;        <span class="hljs-built_in">console</span>.log(data)        <span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Object</span>.prototype.toString.call(data))        cb1(data.toString())        client.end();    &#125;);    client.on(<span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>&#123;        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'断开与服务器的连接'</span>);    &#125;);    client.on(<span class="hljs-string">'error'</span>, (err) =&gt; &#123;        cb2(err)        <span class="hljs-built_in">console</span>.log(err)    &#125;)&#125;request(&#123;<span class="hljs-attr">port</span>:<span class="hljs-number">8080</span>, <span class="hljs-attr">method</span>: <span class="hljs-string">'GET'</span>, <span class="hljs-attr">headers</span>: &#123;<span class="hljs-string">'Host'</span>: <span class="hljs-string">'localhost:8080'</span>,<span class="hljs-string">'Accept'</span>: <span class="hljs-string">'accept-encoding: gzip, deflate, br'</span>,<span class="hljs-string">'content-length'</span>: <span class="hljs-string">'3'</span>&#125;&#125;, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">cb1</span>(<span class="hljs-params">data</span>) </span>&#123;    <span class="hljs-built_in">console</span>.log(data)&#125;,<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">cb2</span>(<span class="hljs-params">err</span>) </span>&#123;    <span class="hljs-built_in">console</span>.log(err)&#125;)</code></pre></li><li>server端<pre><code class="hljs javascript"><span class="hljs-keyword">const</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>)<span class="hljs-keyword">let</span> httpServer = http.createServer( (req, res) =&gt; &#123;    <span class="hljs-keyword">let</span>  body = <span class="hljs-string">""</span>;    <span class="hljs-built_in">console</span>.log(req.headers)    req.on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">chunk</span>) </span>&#123;      body += chunk;    &#125;);    res.writeHead(<span class="hljs-number">200</span>, &#123;<span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'text/plain'</span>&#125;);    res.write(<span class="hljs-string">"Hello World"</span>);    req.on(<span class="hljs-string">'end'</span>, () =&gt; &#123;       <span class="hljs-built_in">console</span>.log(body)       res.end()    &#125;) &#125;).listen(<span class="hljs-number">8080</span>);</code></pre>　　测试过程中，发现<code>Content-length</code> 是必传的，而且需要自己去计算。但是并没有如文档所描述的那样，必须有 <code>host</code> 头. 可能和具体的<code>server</code>实现有关系。</li></ul><h3 id="HTTP协议不是什么？"><a href="#HTTP协议不是什么？" class="headerlink" title="HTTP协议不是什么？"></a>HTTP协议不是什么？</h3><p>  <code>HTTP</code>不是单独的实体，不能单独存在，它基于可靠的传输层协议，也有一些协议基于它。<code>HTTP</code>专门用来在两点之间传输数据，不能用于广播、寻址或路由。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>前端知识</tag>
+      
+      <tag>浏览器工作原理</tag>
+      
+      <tag>HTTP 协议</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>前端之外</title>
-    <link href="/2019/02/28/outFE/"/>
-    <url>/2019/02/28/outFE/</url>
+    <link href="/2019/02/28/%E5%89%8D%E7%AB%AF%E4%B9%8B%E5%A4%96/"/>
+    <url>/2019/02/28/%E5%89%8D%E7%AB%AF%E4%B9%8B%E5%A4%96/</url>
     
     <content type="html"><![CDATA[<p>　　最近看到阮一峰老师分享的一篇文章<a href="http://rubyhacker.com/blog2/20150917.html" target="_blank" rel="noopener">失传的计算机科学</a>深有同感，如今越来越标准化的开发方式和工具使得开发越来越容易，你很难想象一个使用<code>Vue-Cli</code>工具的前端开发居然不明白<code>webpack</code>是怎么工作的。更奇怪的是，他们任然能够出色的完成需求。<br>软件的开发成本理应越来越低，软件开发从一个刀耕火种的年代一路走到今天，前辈们总结出来的经验和智慧变成工具，从一开始的拖拖拽拽到现在机器学习，工具已经可以强大到可以替代大部分重复劳动的工种。<br>　　但是问题就在这里，现在的工具还不够成熟。<br>　　你无法忽视网络协议，无法忽视性能，无法忽视安全。<br>　　如果有一天，工具能够解决这些问题了。我们应该感觉到开心，大可不必担心自己被替代。<br>因为，可以转行做产品经理啊。(｡･∀･)ﾉﾞ&quot;</p>]]></content>
     
@@ -14,7 +37,7 @@
     
     <tags>
       
-      <tag>技术的思考</tag>
+      <tag>杂谈</tag>
       
     </tags>
     

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="一个平庸的搬运工人">
+  <meta name="author" content="lucienstar">
+  <meta name="keywords" content="林间有风团队,狗屋建筑师,前端工程师">
+  <title>HTTP协议是什么以及不是什么 - 我脑袋里的怪东西</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>我脑袋里的怪东西</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                主页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                tags
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于我
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/review/">
+                <i class="iconfont icon-bookmark-fill"></i>
+                回顾
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax=true
+         style="background: url('/imges/http.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2020-06-09 17:28">
+      2020年6月9日 下午
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      959 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      12
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+            <article class="markdown-body">
+              <h3 id="HTTP协议是什么？"><a href="#HTTP协议是什么？" class="headerlink" title="HTTP协议是什么？"></a>HTTP协议是什么？</h3><p>　　超文本传输协议。是一个用于传输超媒体文档（例如 HTML）的<strong>应用层</strong>协议。<strong>是纯粹的文本协议</strong>，<strong>可以在任何可靠的传输层上使用</strong>。（ HTTP/2 基于 Google 的 SPDY 协议，HTTP/3 基于 Google 的 QUIC 协议），但是通常是基于 HTTP/IP 层，对 TCP 协议来说，TCP 协议是一条双向的通讯通道，HTTP 如果建立在 TCP 的基础上，那么就遵循Request-Response 的模式。也就是说通讯必定是由用户代理首先发起的。</p>
+<p><img src="/imges/HTTP&layers.png" srcset="/img/loading.gif" alt=""><br>　　HTTP被设计于20世纪90年代初期，在最开始设计的时候，只是用于从服务器获取文档，所以只定义了 <code>GET</code> 操作，在后来的日子里，随着计算机媒体的技术的发展，出现了 <code>JPEG</code>，<code>MP3</code> 音乐等，于是有了 <code>HTTP/1.0</code> 。  </p>
+<p>　　<code>HTTP/1.0</code>形式上已经和现在的 <code>HTTP/1.1</code>差别不大了。  </p>
+<ol>
+<li>增加了 HEAD、POST 等新方法；</li>
+<li>增加了响应状态码，标记可能的错误原因；</li>
+<li>引入了协议版本号概念；</li>
+<li>引入了 HTTP Header（头部）的概念，让 HTTP 处理请求和响应更加灵活；</li>
+<li><strong>传输的数据</strong>不再仅限于文本（只是传输的数据不仅限于文本）。</li>
+</ol>
+<p>　　但是这个时候<code>HTTP</code>还是社区维护的状态，大家随意修改。浏览器各自有各自的实现方式，直到浏览器大战的95年后，<code>HTTP</code> 才正式有了一份文档, <a href="https://tools.ietf.org/html/rfc2616" target="_blank" rel="noopener">编号为 RFC 2616</a>。</p>
+<p>　　从版本号我们就可以看到<code>HTTP/1.1</code> 是对 <code>HTTP/1.0</code>的小幅度修正。但是它是一份正式的标准，也就是说，大部分正规的软件会参考标准来做东西（我没有说IE，真的）。  </p>
+<p>　　HTTP/1.1 主要的变更点有：  </p>
+<ol>
+<li>增加了 PUT、DELETE 等新的方法；</li>
+<li>增加了缓存管理和控制；</li>
+<li>明确了连接管理，允许持久连接；</li>
+<li>允许响应数据分块（chunked），利于传输大文件；</li>
+<li>强制要求 Host 头，让互联网主机托管成为可能。</li>
+</ol>
+<p>　　除此之外，<code>HTTP</code> 协议还规定报文必须有 <code>header</code>，但可以没有 <code>body</code>，而且在<code>header</code> 之后必须要有一个“空行”，也就是“CRLF”，十六进制的“0D0A”。如下图所示：<br><img src="/imges/httpmessage.png" srcset="/img/loading.gif" alt=""> </p>
+<p>　　我们可以使用<code>Node</code>来模拟下用户代理已经服务器。</p>
+<ul>
+<li>client端<pre><code class="hljs javascript"><span class="hljs-comment">// client</span>
+<span class="hljs-comment">// 创建一个TCP链接后，使用纯文本传输内容，这就是HTTP协议</span>
+<span class="hljs-keyword">const</span> net = <span class="hljs-built_in">require</span>(<span class="hljs-string">'net'</span>);
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">transforHeader</span>(<span class="hljs-params">headers</span>) </span>&#123;
+    <span class="hljs-keyword">let</span> test = <span class="hljs-built_in">Object</span>.keys(headers).map(<span class="hljs-function">(<span class="hljs-params">key</span>) =&gt;</span> &#123;
+        <span class="hljs-keyword">return</span> key + <span class="hljs-string">': '</span> + headers[key]
+    &#125;).join(<span class="hljs-string">'\r\n'</span>)
+    <span class="hljs-keyword">return</span> test;
+&#125;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">request</span>(<span class="hljs-params">option, cb1, cb2</span>) </span>&#123;
+    <span class="hljs-keyword">let</span> client = net.createConnection(&#123;
+        port: option.port || <span class="hljs-number">8080</span>
+    &#125;, () =&gt; &#123;
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'服务器链接成功'</span>)
+        client.write(option.method + <span class="hljs-string">' / HTTP/1.1\r\n'</span> + transforHeader(option.headers) + <span class="hljs-string">'\r\n\r\n'</span> + <span class="hljs-string">'123'</span>);
+    &#125;);
+    client.on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data</span>) </span>&#123;
+        <span class="hljs-built_in">console</span>.log(data)
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Object</span>.prototype.toString.call(data))
+        cb1(data.toString())
+        client.end();
+    &#125;);
+    client.on(<span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>&#123;
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'断开与服务器的连接'</span>);
+    &#125;);
+    client.on(<span class="hljs-string">'error'</span>, (err) =&gt; &#123;
+        cb2(err)
+        <span class="hljs-built_in">console</span>.log(err)
+    &#125;)
+&#125;
+
+request(&#123;<span class="hljs-attr">port</span>:<span class="hljs-number">8080</span>, <span class="hljs-attr">method</span>: <span class="hljs-string">'GET'</span>, <span class="hljs-attr">headers</span>: &#123;<span class="hljs-string">'Host'</span>: <span class="hljs-string">'localhost:8080'</span>,
+<span class="hljs-string">'Accept'</span>: <span class="hljs-string">'accept-encoding: gzip, deflate, br'</span>,
+<span class="hljs-string">'content-length'</span>: <span class="hljs-string">'3'</span>&#125;&#125;, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">cb1</span>(<span class="hljs-params">data</span>) </span>&#123;
+    <span class="hljs-built_in">console</span>.log(data)
+&#125;,<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">cb2</span>(<span class="hljs-params">err</span>) </span>&#123;
+    <span class="hljs-built_in">console</span>.log(err)
+&#125;)</code></pre></li>
+<li>server端<pre><code class="hljs javascript"><span class="hljs-keyword">const</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>)
+<span class="hljs-keyword">let</span> httpServer = http.createServer(
+ (req, res) =&gt; &#123;
+    <span class="hljs-keyword">let</span>  body = <span class="hljs-string">""</span>;
+    <span class="hljs-built_in">console</span>.log(req.headers)
+    req.on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">chunk</span>) </span>&#123;
+      body += chunk;
+    &#125;);
+    res.writeHead(<span class="hljs-number">200</span>, &#123;<span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'text/plain'</span>&#125;);
+    res.write(<span class="hljs-string">"Hello World"</span>);
+    req.on(<span class="hljs-string">'end'</span>, () =&gt; &#123;
+       <span class="hljs-built_in">console</span>.log(body)
+       res.end()
+
+    &#125;)
+ &#125;
+).listen(<span class="hljs-number">8080</span>);</code></pre>
+　　测试过程中，发现<code>Content-length</code> 是必传的，而且需要自己去计算。但是并没有如文档所描述的那样，必须有 <code>host</code> 头. 可能和具体的<code>server</code>实现有关系。</li>
+</ul>
+<h3 id="HTTP协议不是什么？"><a href="#HTTP协议不是什么？" class="headerlink" title="HTTP协议不是什么？"></a>HTTP协议不是什么？</h3><p>  <code>HTTP</code>不是单独的实体，不能单独存在，它基于可靠的传输层协议，也有一些协议基于它。<code>HTTP</code>专门用来在两点之间传输数据，不能用于广播、寻址或路由。</p>
+
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86/">前端知识</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">浏览器工作原理</a>
+                    
+                      <a class="hover-with-bg" href="/tags/HTTP-%E5%8D%8F%E8%AE%AE/">HTTP 协议</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2019/02/28/%E5%89%8D%E7%AB%AF%E4%B9%8B%E5%A4%96/">
+                        <span class="hidden-mobile">前端之外</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "HTTP协议是什么以及不是什么&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
