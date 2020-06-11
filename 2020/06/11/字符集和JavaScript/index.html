@@ -17,7 +17,7 @@
   <meta name="description" content="一个平庸的搬运工人">
   <meta name="author" content="lucienstar">
   <meta name="keywords" content="林间有风团队,狗屋建筑师,前端工程师">
-  <title>unicode 和 JavaScript - 我脑袋里的怪东西</title>
+  <title>字符集 和 JavaScript - 我脑袋里的怪东西</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -139,7 +139,7 @@
 </nav>
 
     <div class="view intro-2" id="background" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
+         style="background: url('/imges/unicodebg.png') no-repeat center center;
            background-size: cover;">
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
@@ -152,8 +152,8 @@
               
   <div class="mt-3 post-meta">
     <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-    <time datetime="2020-06-10 16:58">
-      2020年6月10日 下午
+    <time datetime="2020-06-11 09:46">
+      2020年6月11日 上午
     </time>
   </div>
 
@@ -163,7 +163,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      0 字
+      792 字
     </span>
   
 
@@ -173,7 +173,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      1
+      8
        分钟
     </span>
   
@@ -204,12 +204,48 @@
           <div class="post-content mx-auto" id="post">
             
             <article class="markdown-body">
-              
+              <p>　　JavaScript源代码文本支持所有的 <code>Unicode</code> 字符集。在 <code>ECMA262 10th</code>上，定义的是 <code>U+0000 to U+10FFFF</code> 区间。在此记录下了解 <code>Unicode</code>  的过程。  </p>
+<h3 id="Unicode"><a href="#Unicode" class="headerlink" title="Unicode"></a>Unicode</h3><p>　　<code>Unicode</code> 的出现，是想让全世界统一一套字符集（不过最近疯狂在弄Emoji），当时在做同样事情的组织还有 <code>UCS</code> 团队。<code>Unicode</code> 为每一个字符规定了 <code>code point</code>,也就是码点。它从0开始，为每个符号指定一个编号。使用 <code>U+</code> 跟在后面的十六进制数来表示。<code>U+597D</code>，JavaScript允许直接用码点表示Unicode字符，比如 <code>\u597D</code>。<code>Unicode</code> 按区间来划分。最前面的65536个字符位，称为BMP，写成16进制就是从<code>U+0000</code>到<code>U+FFFF</code>。所有最常见的字符都放在这个平面。在<code>JS</code>中也最好只使用这些字符。</p>
+<h3 id="UTF-8与UTF-16，UTF-32"><a href="#UTF-8与UTF-16，UTF-32" class="headerlink" title="UTF-8与UTF-16，UTF-32"></a>UTF-8与UTF-16，UTF-32</h3><p>　　<code>Unicode</code>只是规定了码点，但是并没有规定具体的编码形式。也就是说，最直观的就是 <code>UTF-32</code>,每个码点使用四个字节表示，字节内容一一对应码点。比如字母<code>A</code> 就是 <code>\u0041</code>。在内存中就是<code>0x00000041</code>。虽然这种方式查找效率高，但是对于大部分小于<code>U+FFFF</code>的字节来说，文件会大4倍。于是 <code>utf-8</code> 和 <code>utf-16</code> 这种可变长度就受到了大家亲睐。  </p>
+<ul>
+<li>utf-8<br>　　UTF-8是一种变长的编码方法，字符长度从1个字节到4个字节不等。UTF-8 的编码规则很简单，只有二条：  </li>
+</ul>
+<ol>
+<li><p>对于单字节的符号，字节的第一位设为0，后面7位为这个符号的 Unicode 码。因此对于英语字母，UTF-8 编码和 ASCII 码是相同的。  </p>
+</li>
+<li><p>对于n字节的符号（n &gt; 1），第一个字节的前n位都设为1，第n + 1位设为0，后面字节的前两位一律设为10。剩下的没有提及的二进制位，全部为这个符号的 Unicode 码。  </p>
+</li>
+</ol>
+<ul>
+<li><p>utf-16<br>utf-16编码应该是最优秀了的，因为同时结合了定长和变长两种编码方法的特点。它的编码规很简单：基本平面的字符占用2个字节，辅助平面的字符占用4个字节。所以很好的平衡了时间和空间。  </p>
+<h3 id="字符集和-JavaScript"><a href="#字符集和-JavaScript" class="headerlink" title="字符集和 JavaScript"></a>字符集和 JavaScript</h3><p>　　早期的<code>JS</code>是采用的<code>UCS-2</code>编码，使用2个字节表示已经有码点的字符。所以随着 <code>Unicode</code>的发展，2个字节已经不足以表达所有的码点。导致<code>JavaScript</code>的字符函数都受到了影响，无法返回正确结果。  </p>
+<pre><code class="javascript"><span class="keyword">let</span> s = <span class="string">'𝄆'</span>
+s.length <span class="comment">// 2</span></code></pre>
+</li>
+</ul>
+<p>　　好在 <code>ES6</code> 字符串对于字符进行了加强。关于超过<code>\uFFFF</code>的码点，可以这样表示<code>\u{1D106}</code>。但是，为了保持兼容，length属性还是原来的行为方式。为了得到字符串的正确长度，可以用下面的方式。  </p>
+<pre><code>`Array.from(string).length`。  </code></pre><p>　　也新增了几个专门处理4字节码点的函数。  </p>
+<pre><code>```javascript
+String.fromCodePoint()：从Unicode码点返回对应字符
+String.prototype.codePointAt()：从字符返回对应的码点
+String.prototype.at()：返回字符串给定位置的字符
+```  </code></pre>
             </article>
             <hr>
             <div>
               <div class="post-metas mb-3">
                 
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86/">前端知识</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E7%BC%96%E7%A0%81/">编码</a>
+                    
+                  </div>
                 
               </div>
               
@@ -364,7 +400,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "unicode 和 JavaScript&nbsp;",
+        "字符集 和 JavaScript&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,
