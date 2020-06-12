@@ -17,7 +17,7 @@
   <meta name="description" content="一个平庸的搬运工人">
   <meta name="author" content="lucienstar">
   <meta name="keywords" content="林间有风团队,狗屋建筑师,前端工程师">
-  <title>字符集 和 JavaScript - 我脑袋里的怪东西</title>
+  <title>HTTP协议缓存|生鲜速递 - 我脑袋里的怪东西</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -139,7 +139,7 @@
 </nav>
 
     <div class="view intro-2" id="background" parallax=true
-         style="background: url('/imges/unicodebg.png') no-repeat center center;
+         style="background: url('/imges/http.jpg') no-repeat center center;
            background-size: cover;">
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
@@ -152,8 +152,8 @@
               
   <div class="mt-3 post-meta">
     <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-    <time datetime="2020-06-11 09:46">
-      2020年6月11日 上午
+    <time datetime="2020-06-12 10:28">
+      2020年6月12日 上午
     </time>
   </div>
 
@@ -163,7 +163,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      791 字
+      725 字
     </span>
   
 
@@ -173,7 +173,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      8
+      7
        分钟
     </span>
   
@@ -204,30 +204,12 @@
           <div class="post-content mx-auto" id="post">
             
             <article class="markdown-body">
-              <p>　　JavaScript源代码文本支持所有的 <code>Unicode</code> 字符集。在 <code>ECMA262 10th</code>上，定义的是 <code>U+0000 to U+10FFFF</code> 区间。在此记录下了解 <code>Unicode</code>  的过程。  </p>
-<h3 id="Unicode"><a href="#Unicode" class="headerlink" title="Unicode"></a>Unicode</h3><p>　　<code>Unicode</code> 的出现，是想让全世界统一一套字符集（不过最近疯狂在弄Emoji），当时在做同样事情的组织还有 <code>UCS</code> 团队。<code>Unicode</code> 为每一个字符规定了 <code>code point</code>,也就是码点。它从0开始，为每个符号指定一个编号。使用 <code>U+</code> 跟在后面的十六进制数来表示。<code>U+597D</code>，JavaScript允许直接用码点表示Unicode字符，比如 <code>\u597D</code>。<code>Unicode</code> 按区间来划分。最前面的65536个字符位，称为BMP，写成16进制就是从<code>U+0000</code>到<code>U+FFFF</code>。所有最常见的字符都放在这个平面。在<code>JS</code>中也最好只使用这些字符。</p>
-<h3 id="UTF-8与UTF-16，UTF-32"><a href="#UTF-8与UTF-16，UTF-32" class="headerlink" title="UTF-8与UTF-16，UTF-32"></a>UTF-8与UTF-16，UTF-32</h3><p>　　<code>Unicode</code>只是规定了码点，但是并没有规定具体的编码形式。也就是说，最直观的就是 <code>UTF-32</code>,每个码点使用四个字节表示，字节内容一一对应码点。比如字母<code>A</code> 就是 <code>\u0041</code>。在内存中就是<code>0x00000041</code>。虽然这种方式查找效率高，但是对于大部分小于<code>U+FFFF</code>的字节来说，文件会大4倍。于是 <code>utf-8</code> 和 <code>utf-16</code> 这种可变长度就受到了大家亲睐。  </p>
-<ul>
-<li>utf-8<br>　　UTF-8是一种变长的编码方法，字符长度从1个字节到4个字节不等。UTF-8 的编码规则很简单，只有二条：  </li>
-</ul>
-<ol>
-<li><p>对于单字节的符号，字节的第一位设为0，后面7位为这个符号的 Unicode 码。因此对于英语字母，UTF-8 编码和 ASCII 码是相同的。  </p>
-</li>
-<li><p>对于n字节的符号（n &gt; 1），第一个字节的前n位都设为1，第n + 1位设为0，后面字节的前两位一律设为10。剩下的没有提及的二进制位，全部为这个符号的 Unicode 码。  </p>
-</li>
-</ol>
-<ul>
-<li><p>utf-16<br>utf-16编码应该是最优秀了的，因为同时结合了定长和变长两种编码方法的特点。它的编码规很简单：基本平面的字符占用2个字节，辅助平面的字符占用4个字节。所以很好的平衡了时间和空间。  </p>
-<h3 id="字符集和-JavaScript"><a href="#字符集和-JavaScript" class="headerlink" title="字符集和 JavaScript"></a>字符集和 JavaScript</h3><p>　　早期的<code>JS</code>是采用的<code>UCS-2</code>编码，使用2个字节表示已经有码点的字符。所以随着 <code>Unicode</code>的发展，2个字节已经不足以表达所有的码点。导致<code>JavaScript</code>的字符函数都受到了影响，无法返回正确结果。  </p>
-<pre><code class="javascript"><span class="keyword">let</span> s = <span class="string">'𝄆'</span>
-s.length <span class="comment">// 2</span></code></pre>
-</li>
-</ul>
-<p>　　好在 <code>ES6</code> 字符串对于字符进行了加强。关于超过<code>\uFFFF</code>的码点，可以这样表示<code>\u{1D106}</code>。但是，为了保持兼容，length属性还是原来的行为方式。为了得到字符串的正确长度，可以用下面的方式。<br>　　<code>Array.from(string).length</code>。  </p>
-<p>　　也新增了几个专门处理4字节码点的函数.</p>
-<pre><code class="javascript"><span class="built_in">String</span>.fromCodePoint()：从Unicode码点返回对应字符
-<span class="built_in">String</span>.prototype.codePointAt()：从字符返回对应的码点
-<span class="built_in">String</span>.prototype.at()：返回字符串给定位置的字符</code></pre>
+              <p>　　<code>HTTP1.1协议</code>加入了缓存控制。</p>
+<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><p>　　缓存是一种有效的缓解服务器端压力，提升性能的手段。HTTP定义了三种控制缓存的基本机制：新鲜度(Freshness)，验证(Validation)和失效(Expiration)。</p>
+<h3 id="不同种类的缓存"><a href="#不同种类的缓存" class="headerlink" title="不同种类的缓存"></a>不同种类的缓存</h3><p>　　缓存的种类有很多,其大致可归为两类：私有与共享缓存。私有缓存只能作用单独的用户，比如浏览器。而共享缓存可以被多个用户使用。比如代理缓存，CDN,反向代理，负载均衡等。</p>
+<h3 id="生鲜速递"><a href="#生鲜速递" class="headerlink" title="生鲜速递"></a>生鲜速递</h3><p>　　我们用一个生鲜速递的例子来描述缓存。<br>　　夏天到了，我们打开冰箱，想找瓶快乐水。但是发现没有，于是我们天猫超市一波，天猫超市给我们送来了一箱快乐水。于是，冰箱成了缓存，我成了浏览器，天猫超市成了服务器，汽水就是资源。<br><img src="/imges/%E8%B6%85%E5%B8%82.png" srcset="/img/loading.gif" alt=""><br>　　我们都知道，有的商品是有保质期的（新鲜度），或者是商家自己打包的商品，你需要询问商家是不是最新的。保质期过了（失效），你可能会把它丢掉，或者你舍不得丢，想继续吃，于是问下商家，还可以吃吗？（验证）。又或者有些东西开袋即食，是不可以保存的。你可以发现， <code>HTTP协议</code>，里的<code>Cache-Control</code>都可以找到对应的字段来处理这些问题。<br>　　<code>max-age</code>对应着保质期。<code>no_store</code>对应着开袋即食，<code>no_cache</code>代表着你使用商品前需要询问下商家。<code>must-revalidate</code>对应着商品过期后，必须询问商家。<code>max-stale</code>对应着商家允许你在过期时间后继续消费商品。</p>
+<h3 id="Cache-Control的缺陷以及解决方案"><a href="#Cache-Control的缺陷以及解决方案" class="headerlink" title="Cache-Control的缺陷以及解决方案"></a>Cache-Control的缺陷以及解决方案</h3><p>　　浏览器用“Cache-Control”做缓存控制只能是刷新数据，不能很好地利用缓存数据，又因<br>为缓存会失效，使用前还必须要去服务器验证是否是最新版。于是你必须发送两个请求。先发送一个<code>HEAD</code>请求，如果过期了，再发送一个<code>GET</code>请求。  </p>
+<p>　　针对这种情况,<code>HTTP协议</code>加入了条件请求，让服务也有了控制缓存的权限。当客户端发起一个请求时，缓存检索到已有一个对应的陈旧资源（缓存副本），则缓存会先将此请求附加一个<code>If-None-Match</code>头，然后发给目标服务器，以此来检查该资源副本是否是依然还是算新鲜的，若服务器返回了 304 (Not Modified)（该响应不会有带有实体信息），则表示此资源副本是新鲜的，这样一来，可以节省一些带宽。若服务器通过 <code>If-None-Match</code> 或 <code>If-Modified-Since</code>判断后发现已过期，那么会带有该资源的实体内容返回。</p>
 
             </article>
             <hr>
@@ -240,9 +222,9 @@ s.length <span class="comment">// 2</span></code></pre>
                     
                       <a class="hover-with-bg" href="/tags/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86/">前端知识</a>
                     
-                      <a class="hover-with-bg" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a>
+                      <a class="hover-with-bg" href="/tags/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">浏览器工作原理</a>
                     
-                      <a class="hover-with-bg" href="/tags/%E7%BC%96%E7%A0%81/">编码</a>
+                      <a class="hover-with-bg" href="/tags/HTTP-%E5%8D%8F%E8%AE%AE/">HTTP 协议</a>
                     
                   </div>
                 
@@ -255,18 +237,12 @@ s.length <span class="comment">// 2</span></code></pre>
                   <div class="post-prev col-6">
                     
                     
-                      <a href="/2020/06/12/HTTP%E5%8D%8F%E8%AE%AE%E7%BC%93%E5%AD%98%7C%E7%94%9F%E9%B2%9C%E9%80%9F%E9%80%92/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">HTTP协议缓存|生鲜速递</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </div>
                   <div class="post-next col-6">
                     
                     
-                      <a href="/2020/06/09/HTTP%E5%8D%8F%E8%AE%AE%E6%98%AF%E4%BB%80%E4%B9%88%E4%BB%A5%E5%8F%8A%E4%B8%8D%E6%98%AF%E4%BB%80%E4%B9%88/">
-                        <span class="hidden-mobile">HTTP协议是什么以及不是什么</span>
+                      <a href="/2020/06/11/%E5%AD%97%E7%AC%A6%E9%9B%86%E5%92%8CJavaScript/">
+                        <span class="hidden-mobile">字符集 和 JavaScript</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -405,7 +381,7 @@ s.length <span class="comment">// 2</span></code></pre>
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "字符集 和 JavaScript&nbsp;",
+        "HTTP协议缓存|生鲜速递&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,

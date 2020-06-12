@@ -4,6 +4,29 @@
   
   
   <entry>
+    <title>HTTP协议缓存|生鲜速递</title>
+    <link href="/2020/06/12/HTTP%E5%8D%8F%E8%AE%AE%E7%BC%93%E5%AD%98%7C%E7%94%9F%E9%B2%9C%E9%80%9F%E9%80%92/"/>
+    <url>/2020/06/12/HTTP%E5%8D%8F%E8%AE%AE%E7%BC%93%E5%AD%98%7C%E7%94%9F%E9%B2%9C%E9%80%9F%E9%80%92/</url>
+    
+    <content type="html"><![CDATA[<p>　　<code>HTTP1.1协议</code>加入了缓存控制。</p><h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><p>　　缓存是一种有效的缓解服务器端压力，提升性能的手段。HTTP定义了三种控制缓存的基本机制：新鲜度(Freshness)，验证(Validation)和失效(Expiration)。</p><h3 id="不同种类的缓存"><a href="#不同种类的缓存" class="headerlink" title="不同种类的缓存"></a>不同种类的缓存</h3><p>　　缓存的种类有很多,其大致可归为两类：私有与共享缓存。私有缓存只能作用单独的用户，比如浏览器。而共享缓存可以被多个用户使用。比如代理缓存，CDN,反向代理，负载均衡等。</p><h3 id="生鲜速递"><a href="#生鲜速递" class="headerlink" title="生鲜速递"></a>生鲜速递</h3><p>　　我们用一个生鲜速递的例子来描述缓存。<br>　　夏天到了，我们打开冰箱，想找瓶快乐水。但是发现没有，于是我们天猫超市一波，天猫超市给我们送来了一箱快乐水。于是，冰箱成了缓存，我成了浏览器，天猫超市成了服务器，汽水就是资源。<br><img src="/imges/%E8%B6%85%E5%B8%82.png" srcset="/img/loading.gif" alt=""><br>　　我们都知道，有的商品是有保质期的（新鲜度），或者是商家自己打包的商品，你需要询问商家是不是最新的。保质期过了（失效），你可能会把它丢掉，或者你舍不得丢，想继续吃，于是问下商家，还可以吃吗？（验证）。又或者有些东西开袋即食，是不可以保存的。你可以发现， <code>HTTP协议</code>，里的<code>Cache-Control</code>都可以找到对应的字段来处理这些问题。<br>　　<code>max-age</code>对应着保质期。<code>no_store</code>对应着开袋即食，<code>no_cache</code>代表着你使用商品前需要询问下商家。<code>must-revalidate</code>对应着商品过期后，必须询问商家。<code>max-stale</code>对应着商家允许你在过期时间后继续消费商品。</p><h3 id="Cache-Control的缺陷以及解决方案"><a href="#Cache-Control的缺陷以及解决方案" class="headerlink" title="Cache-Control的缺陷以及解决方案"></a>Cache-Control的缺陷以及解决方案</h3><p>　　浏览器用“Cache-Control”做缓存控制只能是刷新数据，不能很好地利用缓存数据，又因<br>为缓存会失效，使用前还必须要去服务器验证是否是最新版。于是你必须发送两个请求。先发送一个<code>HEAD</code>请求，如果过期了，再发送一个<code>GET</code>请求。  </p><p>　　针对这种情况,<code>HTTP协议</code>加入了条件请求，让服务也有了控制缓存的权限。当客户端发起一个请求时，缓存检索到已有一个对应的陈旧资源（缓存副本），则缓存会先将此请求附加一个<code>If-None-Match</code>头，然后发给目标服务器，以此来检查该资源副本是否是依然还是算新鲜的，若服务器返回了 304 (Not Modified)（该响应不会有带有实体信息），则表示此资源副本是新鲜的，这样一来，可以节省一些带宽。若服务器通过 <code>If-None-Match</code> 或 <code>If-Modified-Since</code>判断后发现已过期，那么会带有该资源的实体内容返回。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>前端知识</tag>
+      
+      <tag>浏览器工作原理</tag>
+      
+      <tag>HTTP 协议</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>字符集 和 JavaScript</title>
     <link href="/2020/06/11/%E5%AD%97%E7%AC%A6%E9%9B%86%E5%92%8CJavaScript/"/>
     <url>/2020/06/11/%E5%AD%97%E7%AC%A6%E9%9B%86%E5%92%8CJavaScript/</url>
