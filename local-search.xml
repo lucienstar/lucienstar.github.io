@@ -4,6 +4,29 @@
   
   
   <entry>
+    <title>浏览器事件循环及消息队列</title>
+    <link href="/2020/06/16/%E6%B5%8F%E8%A7%88%E5%99%A8%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%8F%8A%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/"/>
+    <url>/2020/06/16/%E6%B5%8F%E8%A7%88%E5%99%A8%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%8F%8A%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/</url>
+    
+    <content type="html"><![CDATA[<p>　　事件循环的概念早就有了，只能感慨自己见识少。自己的思考方式还是偏向上层应用，还是得多看看软件设计基础。<br>　　事件循环系统由宿主提供，在浏览器里，参照<a href="https://html.spec.whatwg.org/#event-loops" target="_blank" rel="noopener">whatwg</a>。  </p><h3 id="什么是事件循环以及事件循环解决了什么问题"><a href="#什么是事件循环以及事件循环解决了什么问题" class="headerlink" title="什么是事件循环以及事件循环解决了什么问题"></a>什么是事件循环以及事件循环解决了什么问题</h3><p>　　按照规范来说，就是协调用户操作，脚本，渲染，网络等等事件的处理的机制。一个事件循环系统可以有一个或者多个任务队列。<br>　　浏览器从早期的单进程架构走向现在的多进程架构(多进程之间进程隔离，虽然占有空间变大，但是安全性和稳定性会变高)。我们打开一个 <code>chrome</code>的任务管理器。会发现一个<code>tab</code>页下，有多个进程在同时运行。包含浏览器进程、GPU进程、网络进程，音频进程、渲染进程（有些机制会复用同一个渲染进程）、插件进程等等。<br>　　就我们浏览一个网页而言，我们输入一个<code>uri</code>，渲染进程就会通知网络进程去下载资源。下载完毕之后就需要通知渲染进程进行渲染。而浏览器又是进程隔离的。只有渲染进程一个单进程在处理任务，这个时候就需要有一种机制来处理这种情况。也就是消息队列和事件循环。</p><h3 id="消息队列及使用消息队列的缺点"><a href="#消息队列及使用消息队列的缺点" class="headerlink" title="消息队列及使用消息队列的缺点"></a>消息队列及使用消息队列的缺点</h3><p>　　当浏览器遇到对应的输入，不同的进程会向自己的消息队列推送对应的任务。也会通过进程通信，向主线程的消息队<code>postTask</code>。<code>chrome</code>源码中，为不同的任务定义了不同的类型。</p><pre><code class="hljs c++"><span class="hljs-keyword">enum</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TaskType</span> :</span> <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> &#123;  kJavascriptTimer = <span class="hljs-number">10</span>&#125;</code></pre><p>　　页面线程所有执行的任务都来自于消息队列。消息队列是“先进先出”的属性，也就是说放入队列中的任务，需要等待前面的任务被执行完，才会被执行。于是，有些任务的实效性就成了问题。</p><h3 id="微任务队列"><a href="#微任务队列" class="headerlink" title="微任务队列"></a>微任务队列</h3><p>　　为了解决实效性的问题，<code>V8</code>设计了微任务队列。在宏任务执行完成之后，渲染引擎并不着急去执行下一个宏任务，而是执行当前宏任务中的产生的微任务队列。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>前端知识</tag>
+      
+      <tag>浏览器工作原理</tag>
+      
+      <tag>计算机基础</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>HTTP协议缓存|生鲜速递</title>
     <link href="/2020/06/12/HTTP%E5%8D%8F%E8%AE%AE%E7%BC%93%E5%AD%98%7C%E7%94%9F%E9%B2%9C%E9%80%9F%E9%80%92/"/>
     <url>/2020/06/12/HTTP%E5%8D%8F%E8%AE%AE%E7%BC%93%E5%AD%98%7C%E7%94%9F%E9%B2%9C%E9%80%9F%E9%80%92/</url>

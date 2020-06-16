@@ -17,7 +17,7 @@
   <meta name="description" content="一个平庸的搬运工人">
   <meta name="author" content="lucienstar">
   <meta name="keywords" content="林间有风团队,狗屋建筑师,前端工程师">
-  <title>HTTP协议缓存|生鲜速递 - 我脑袋里的怪东西</title>
+  <title>浏览器事件循环及消息队列 - 我脑袋里的怪东西</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -139,7 +139,7 @@
 </nav>
 
     <div class="view intro-2" id="background" parallax=true
-         style="background: url('/imges/http.jpg') no-repeat center center;
+         style="background: url('/imges/eventloop.png') no-repeat center center;
            background-size: cover;">
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
@@ -152,8 +152,8 @@
               
   <div class="mt-3 post-meta">
     <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-    <time datetime="2020-06-12 10:28">
-      2020年6月12日 上午
+    <time datetime="2020-06-16 10:50">
+      2020年6月16日 上午
     </time>
   </div>
 
@@ -163,7 +163,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      725 字
+      609 字
     </span>
   
 
@@ -173,7 +173,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      7
+      6
        分钟
     </span>
   
@@ -204,12 +204,14 @@
           <div class="post-content mx-auto" id="post">
             
             <article class="markdown-body">
-              <p>　　<code>HTTP1.1协议</code>加入了缓存控制。</p>
-<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><p>　　缓存是一种有效的缓解服务器端压力，提升性能的手段。HTTP定义了三种控制缓存的基本机制：新鲜度(Freshness)，验证(Validation)和失效(Expiration)。</p>
-<h3 id="不同种类的缓存"><a href="#不同种类的缓存" class="headerlink" title="不同种类的缓存"></a>不同种类的缓存</h3><p>　　缓存的种类有很多,其大致可归为两类：私有与共享缓存。私有缓存只能作用单独的用户，比如浏览器。而共享缓存可以被多个用户使用。比如代理缓存，CDN,反向代理，负载均衡等。</p>
-<h3 id="生鲜速递"><a href="#生鲜速递" class="headerlink" title="生鲜速递"></a>生鲜速递</h3><p>　　我们用一个生鲜速递的例子来描述缓存。<br>　　夏天到了，我们打开冰箱，想找瓶快乐水。但是发现没有，于是我们天猫超市一波，天猫超市给我们送来了一箱快乐水。于是，冰箱成了缓存，我成了浏览器，天猫超市成了服务器，汽水就是资源。<br><img src="/imges/%E8%B6%85%E5%B8%82.png" srcset="/img/loading.gif" alt=""><br>　　我们都知道，有的商品是有保质期的（新鲜度），或者是商家自己打包的商品，你需要询问商家是不是最新的。保质期过了（失效），你可能会把它丢掉，或者你舍不得丢，想继续吃，于是问下商家，还可以吃吗？（验证）。又或者有些东西开袋即食，是不可以保存的。你可以发现， <code>HTTP协议</code>，里的<code>Cache-Control</code>都可以找到对应的字段来处理这些问题。<br>　　<code>max-age</code>对应着保质期。<code>no_store</code>对应着开袋即食，<code>no_cache</code>代表着你使用商品前需要询问下商家。<code>must-revalidate</code>对应着商品过期后，必须询问商家。<code>max-stale</code>对应着商家允许你在过期时间后继续消费商品。</p>
-<h3 id="Cache-Control的缺陷以及解决方案"><a href="#Cache-Control的缺陷以及解决方案" class="headerlink" title="Cache-Control的缺陷以及解决方案"></a>Cache-Control的缺陷以及解决方案</h3><p>　　浏览器用“Cache-Control”做缓存控制只能是刷新数据，不能很好地利用缓存数据，又因为缓存会失效，使用前还必须要去服务器验证是否是最新版。于是你必须发送两个请求。先发送一个<code>HEAD</code>请求，如果过期了，再发送一个<code>GET</code>请求。  </p>
-<p>　　针对这种情况,<code>HTTP协议</code>加入了条件请求，让服务也有了控制缓存的权限。当客户端发起一个请求时，缓存检索到已有一个对应的陈旧资源（缓存副本），则缓存会先将此请求附加一个<code>If-None-Match</code>头，然后发给目标服务器，以此来检查该资源副本是否是依然还是算新鲜的，若服务器返回了 304 (Not Modified)（该响应不会有带有实体信息），则表示此资源副本是新鲜的，这样一来，可以节省一些带宽。若服务器通过 <code>If-None-Match</code> 或 <code>If-Modified-Since</code>判断后发现已过期，那么会带有该资源的实体内容返回。</p>
+              <p>　　事件循环的概念早就有了，只能感慨自己见识少。自己的思考方式还是偏向上层应用，还是得多看看软件设计基础。<br>　　事件循环系统由宿主提供，在浏览器里，参照<a href="https://html.spec.whatwg.org/#event-loops" target="_blank" rel="noopener">whatwg</a>。  </p>
+<h3 id="什么是事件循环以及事件循环解决了什么问题"><a href="#什么是事件循环以及事件循环解决了什么问题" class="headerlink" title="什么是事件循环以及事件循环解决了什么问题"></a>什么是事件循环以及事件循环解决了什么问题</h3><p>　　按照规范来说，就是协调用户操作，脚本，渲染，网络等等事件的处理的机制。一个事件循环系统可以有一个或者多个任务队列。<br>　　浏览器从早期的单进程架构走向现在的多进程架构(多进程之间进程隔离，虽然占有空间变大，但是安全性和稳定性会变高)。我们打开一个 <code>chrome</code>的任务管理器。会发现一个<code>tab</code>页下，有多个进程在同时运行。包含浏览器进程、GPU进程、网络进程，音频进程、渲染进程（有些机制会复用同一个渲染进程）、插件进程等等。<br>　　就我们浏览一个网页而言，我们输入一个<code>uri</code>，渲染进程就会通知网络进程去下载资源。下载完毕之后就需要通知渲染进程进行渲染。而浏览器又是进程隔离的。只有渲染进程一个单进程在处理任务，这个时候就需要有一种机制来处理这种情况。也就是消息队列和事件循环。</p>
+<h3 id="消息队列及使用消息队列的缺点"><a href="#消息队列及使用消息队列的缺点" class="headerlink" title="消息队列及使用消息队列的缺点"></a>消息队列及使用消息队列的缺点</h3><p>　　当浏览器遇到对应的输入，不同的进程会向自己的消息队列推送对应的任务。也会通过进程通信，向主线程的消息队<code>postTask</code>。<code>chrome</code>源码中，为不同的任务定义了不同的类型。</p>
+<pre><code class="hljs c++"><span class="hljs-keyword">enum</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TaskType</span> :</span> <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> &#123;
+  kJavascriptTimer = <span class="hljs-number">10</span>
+&#125;</code></pre>
+<p>　　页面线程所有执行的任务都来自于消息队列。消息队列是“先进先出”的属性，也就是说放入队列中的任务，需要等待前面的任务被执行完，才会被执行。于是，有些任务的实效性就成了问题。</p>
+<h3 id="微任务队列"><a href="#微任务队列" class="headerlink" title="微任务队列"></a>微任务队列</h3><p>　　为了解决实效性的问题，<code>V8</code>设计了微任务队列。在宏任务执行完成之后，渲染引擎并不着急去执行下一个宏任务，而是执行当前宏任务中的产生的微任务队列。</p>
 
             </article>
             <hr>
@@ -224,7 +226,7 @@
                     
                       <a class="hover-with-bg" href="/tags/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">浏览器工作原理</a>
                     
-                      <a class="hover-with-bg" href="/tags/HTTP-%E5%8D%8F%E8%AE%AE/">HTTP 协议</a>
+                      <a class="hover-with-bg" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a>
                     
                   </div>
                 
@@ -237,18 +239,12 @@
                   <div class="post-prev col-6">
                     
                     
-                      <a href="/2020/06/16/%E6%B5%8F%E8%A7%88%E5%99%A8%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%E5%8F%8A%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">浏览器事件循环及消息队列</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </div>
                   <div class="post-next col-6">
                     
                     
-                      <a href="/2020/06/11/%E5%AD%97%E7%AC%A6%E9%9B%86%E5%92%8CJavaScript/">
-                        <span class="hidden-mobile">字符集 和 JavaScript</span>
+                      <a href="/2020/06/12/HTTP%E5%8D%8F%E8%AE%AE%E7%BC%93%E5%AD%98%7C%E7%94%9F%E9%B2%9C%E9%80%9F%E9%80%92/">
+                        <span class="hidden-mobile">HTTP协议缓存|生鲜速递</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -387,7 +383,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "HTTP协议缓存|生鲜速递&nbsp;",
+        "浏览器事件循环及消息队列&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,
