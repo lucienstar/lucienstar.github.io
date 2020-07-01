@@ -4,6 +4,27 @@
   
   
   <entry>
+    <title>什么是 BFC</title>
+    <link href="/2020/07/01/%E4%BB%80%E4%B9%88%E6%98%AF-BFC/"/>
+    <url>/2020/07/01/%E4%BB%80%E4%B9%88%E6%98%AF-BFC/</url>
+    
+    <content type="html"><![CDATA[<p>　　查了半天资料，<code>BFC</code>似乎是<code>CSS</code>独有的概念，在其他领域没有这种概念。再理解<code>BFC</code>之前，我们先看看<code>CSS</code>是怎么工作的。</p><h3 id="css2-1-处理模型"><a href="#css2-1-处理模型" class="headerlink" title="css2.1 处理模型"></a>css2.1 处理模型</h3><p>　　在<a href="https://www.w3.org/TR/2011/REC-CSS2-20110607/intro.html#q2.0" target="_blank" rel="noopener">css2.1规范文档</a>里有提到一种用户代理处理<code>CSS</code>代码的工作模型。</p><ol><li>解析源文档并创建文档树.</li><li>识别目标媒体类型.（media）</li><li>检索文档相关特定目标媒体类型的所有样式表</li><li>通过给每个适用于目标媒体类型的属性赋值来为文档树中的元素做标注。根据层叠与继承中描述的机制来对属性赋值<br>值的计算部分取决于适用于目标媒体类型的格式化算法。例如，如果目标媒体是screen，用户代理会应用<strong>视觉格式化模型</strong></li><li>根据有标注的文档树，生成格式化结构。（DOM + CSSOM）</li><li>把格式化结构传递给目标媒体（例如，打印结果，在屏幕上显示，渲染为声音等等）  </li></ol><h3 id="视觉格式化模型"><a href="#视觉格式化模型" class="headerlink" title="视觉格式化模型"></a>视觉格式化模型</h3><p>　　视觉格式化模型的作用是对于可视化媒体，用户代理怎样处理文档树（也就是浏览器）。在视觉格式化模型中，文档树中的每个元素根据其盒模型生成0个或多个盒。这些盒的布局由（以下因素）控制：  </p><ol><li>盒尺寸与类型</li><li>定位方案（<strong>常规流</strong>，浮动与绝对定位）</li><li>文档树中元素间的关系</li><li>外部信息（例如，视口大小，图片的固有尺寸等等  </li></ol><h3 id="定位方案"><a href="#定位方案" class="headerlink" title="定位方案"></a>定位方案</h3><p>　　CSS 2.1中，一个盒可能会根据三种定位方案来布局：</p><ol><li>常规流 CSS 2.1中，常规流包括块级盒的块格式化（block formatting），行内级盒的行内格式化和块级与行内级盒的相对定位</li><li>浮动 在浮动模型中，盒先根据常规流来放置，然后从常规流中取出来并尽可能远地向左或向右移动。其它内容可能沿着浮动（盒）的一侧排列（Content may flow along the side of a float）</li><li>绝对定位 在绝对定位模型中，一个盒会从常规流中全部移除（它不会影响后面的兄弟元素）并根据包含块确定位置  </li></ol><h3 id="常规流"><a href="#常规流" class="headerlink" title="常规流"></a>常规流</h3><p>　　常规流中的盒属于一个格式化上下文，可能是块或是行内（格式化上下文），但不能两者都是。块级盒参与块格式化上下文。行内级盒参与行内格式化上下文</p><h3 id="块格式化上下文"><a href="#块格式化上下文" class="headerlink" title="块格式化上下文"></a>块格式化上下文</h3><p>　　块级格式化化上下文也就是我们说的<code>BFC</code>。<br>　　浮动，绝对定位的元素，非块盒的块容器（例如inline-blocks，table-cells和table-captions），以及’overflow’不为’visible’的块盒。会为其内容建立新的块格式化上下文。</p><h3 id="块格式化上下文的特点"><a href="#块格式化上下文的特点" class="headerlink" title="块格式化上下文的特点"></a>块格式化上下文的特点</h3><p>　　在一个块格式化上下文中，盒在垂直方向一个接一个地放置，从包含块的顶部开始。两个兄弟盒之间的垂直距离由’margin’属性决定。同一个块格式化上下文中的相邻块级盒之间的垂直外边距会合并。<br>　　在一个块格式化上下文中，每个盒的左外边界（left outer edge）挨着包含块的左外边界（对于从右向左的格式化，右外边界挨着）。即使存在浮动，这也成立。除非该盒建立了一个新的块格式化上下文（这种情况下，该盒自身可能会因为浮动变窄）。</p><h3 id="什么是-BFC"><a href="#什么是-BFC" class="headerlink" title="什么是 BFC"></a>什么是 BFC</h3><p>　　浏览器在渲染的时候，按照一定的规则（css规范）来处理。<code>BFC</code>就是其中一种。仅此而已。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>前端知识</tag>
+      
+      <tag>CSS</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Vue源码解析 keep-alive</title>
     <link href="/2020/06/29/Vue%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90-keep-alive/"/>
     <url>/2020/06/29/Vue%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90-keep-alive/</url>
