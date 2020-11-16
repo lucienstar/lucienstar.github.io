@@ -180,7 +180,23 @@
         <div>
 为下一次分享做准备，此为可执行代码与执行环境第一篇
 
-词法环境　　词法环境也是一种规范类型。　　作用: 词法环境是一个用于定义特定变量和函数标识符在 ECMAScript 代码的词法嵌套结构上关联关系　　创建: 通常词法环境会与 ECMAScript 代码诸如 FunctionDeclaration、WithStatement 或者 TryStatement 的 Catch 块这样的特定句法结构</div>
+我们尝试解释一种行为var a = 2;
+
+function foo() &#123;
+  console.log(a)
+&#125;
+
+function bar() &#123;
+  var a = 5;
+  foo()
+&#125;
+
+bar() //2
+
+function bar() &#123;
+  var a = 3;
+
+  fun</div>
       </a>
 
       <div class="index-btm post-metas">
