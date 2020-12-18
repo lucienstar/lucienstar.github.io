@@ -163,7 +163,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      681 字
+      1.3k 字
     </span>
   
 
@@ -173,7 +173,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      7
+      15
        分钟
     </span>
   
@@ -210,15 +210,15 @@
 <pre><code class="hljs javascript">f(x) = y;</code></pre>
 <p>　　我们要明确我们的函数到底会做什么？输入一个值，输出的就是一个我们想要的结果。然后通过控制参数，通过函数一步步的递进求得最后终止条件的值，然后再递归回来。</p>
 <h3 id="举几个例子"><a href="#举几个例子" class="headerlink" title="举几个例子"></a>举几个例子</h3><p>　　分别举例，一个简单题目，一个中等题目，一个困难题目。</p>
-<h4 id="简单"><a href="#简单" class="headerlink" title="简单"></a>简单</h4><p>(二叉树的坡度)[<a href="https://leetcode-cn.com/problems/binary-tree-tilt/]" target="_blank" rel="noopener">https://leetcode-cn.com/problems/binary-tree-tilt/]</a></p>
+<h4 id="简单"><a href="#简单" class="headerlink" title="简单"></a>简单</h4><p><a href="https://leetcode-cn.com/problems/binary-tree-tilt/" target="_blank" rel="noopener">563.二叉树的坡度</a></p>
 <p>计算每个节点的坡度，按照我们上一节讲的，明确我们的函数到底会做什么？</p>
 <ol>
 <li>首先这道题目是求所有节点的坡度， 所以只要求得每个节点的坡度，最后再加起来就行</li>
-<li><strong>我们函数就是一个树的和</strong><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> rec = <span class="hljs-function">(<span class="hljs-params">root</span>) =&gt;</span> &#123;
+<li>明确我们的递归函数是做什么 <strong>我们函数就是一个树的所有的值和</strong><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> rec = <span class="hljs-function">(<span class="hljs-params">root</span>) =&gt;</span> &#123;
   <span class="hljs-comment">// 求一个树的和，左树 + 右树 + 节点本身</span>
   <span class="hljs-keyword">return</span> left + right + root.val;
 &#125;</code></pre></li>
-<li>函数做什么？先求每个节点的坡度<pre><code class="hljs javascript"><span class="hljs-keyword">const</span> rec = <span class="hljs-function">(<span class="hljs-params">root</span>) =&gt;</span> &#123;
+<li>函数还要做其他什么？先求每个节点的坡度<pre><code class="hljs javascript"><span class="hljs-keyword">const</span> rec = <span class="hljs-function">(<span class="hljs-params">root</span>) =&gt;</span> &#123;
   <span class="hljs-comment">// 随便什么遍历，后续最好</span>
   <span class="hljs-keyword">let</span> left = rec(root.left)
   <span class="hljs-keyword">let</span> right = rec(root.right)
@@ -235,7 +235,68 @@
   <span class="hljs-comment">// 求一个树的和，左树 + 右树 + 节点本身</span>
   <span class="hljs-keyword">return</span> left + right + root.val;
 &#125;</code></pre>
-　　完事！<h4 id="中等"><a href="#中等" class="headerlink" title="中等"></a>中等</h4><h4 id="复杂"><a href="#复杂" class="headerlink" title="复杂"></a>复杂</h4></li>
+<h4 id="中等"><a href="#中等" class="headerlink" title="中等"></a>中等</h4><a href="https://leetcode-cn.com/problems/validate-binary-search-tree/" target="_blank" rel="noopener">98. 验证二叉搜索树</a>  </li>
+</ol>
+<ol>
+<li>首先这道题目是验证二叉搜素树，和题目描述的二叉搜素树的特征一样</li>
+</ol>
+<ul>
+<li>节点的左子树只包含小于当前节点的数。</li>
+<li>节点的右子树只包含大于当前节点的数。</li>
+<li>所有左子树和右子树自身必须也是二叉搜索树</li>
+</ul>
+<ol start="2">
+<li>明确我们的递归函数是做什么 <strong>我们函数就是判定一个树是不是二叉树，是就返还true,不是就返还false</strong><pre><code class="hljs javascript"><span class="hljs-keyword">var</span> isValidBST = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root</span>) </span>&#123;
+  <span class="hljs-keyword">return</span> isValidBST(root.left) &amp;&amp; isValidBST(root.right);
+&#125;;</code></pre></li>
+<li>函数还要做其他什么？ 上面的函数，只是求了 左子树 和 右 子树 是不是一个搜素二叉树。那么本身应该怎么判断？我们在前序遍历中，可以拿到当前节点的值。当前这个节点大于右子树的值，小于左子树的值，那么就符合条件。<pre><code class="hljs javascript"><span class="hljs-keyword">var</span> isValidBST = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, min, max</span>) </span>&#123;
+  <span class="hljs-keyword">if</span>(root.val &gt;= min &amp;&amp; root.val &lt;= max) <span class="hljs-keyword">return</span> &#123;
+    isValidBST(root.left, min, root.val) &amp;&amp; isValidBST(root.right, root.val, max);
+  &#125;
+  <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;</code></pre></li>
+<li>添加终止条件，当节点为空时，都满足，返回true;<pre><code class="hljs javascript"><span class="hljs-keyword">var</span> isValidBST = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, min, max</span>) </span>&#123;
+  <span class="hljs-keyword">if</span>(!root) &#123;
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+  &#125;
+  <span class="hljs-keyword">if</span>(root.val &gt;= min &amp;&amp; root.val &lt;= max) <span class="hljs-keyword">return</span> &#123;
+    isValidBST(root.left, min, root.val) &amp;&amp; isValidBST(root.right, root.val, max);
+  &#125;
+  <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;</code></pre>
+<h4 id="复杂"><a href="#复杂" class="headerlink" title="复杂"></a>复杂</h4><a href="https://leetcode-cn.com/problems/binary-tree-maximum-path-sum/" target="_blank" rel="noopener">124.二叉树中的最大路径和</a>  </li>
+</ol>
+<ol>
+<li>什么是最大路径和？左子树最大路径和加上右子树最大路径和加上节点本身</li>
+<li>明确我们的递归函数做什么？如果只有一颗树，就两个节点，那么最大的路径就是节点本身加上左子节点和右子节点当中最大的那个<pre><code class="hljs javascript"><span class="hljs-keyword">const</span> rec = <span class="hljs-function">(<span class="hljs-params">root</span>) =&gt;</span> &#123;
+  <span class="hljs-keyword">return</span> root.val + <span class="hljs-built_in">Math</span>.max(left,right)
+&#125;</code></pre></li>
+<li>函数还要做什么？对比所有的左子树和右子树，选最大的那个跟当前节点相加。<pre><code class="hljs javascript"><span class="hljs-keyword">var</span> maxPathSum = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root</span>) </span>&#123;
+    <span class="hljs-comment">// 后续遍历</span>
+  <span class="hljs-keyword">let</span> ans = <span class="hljs-built_in">Number</span>.MIN_SAFE_INTEGER;
+  <span class="hljs-keyword">const</span> rec = <span class="hljs-function">(<span class="hljs-params">root</span>) =&gt;</span> &#123;
+    <span class="hljs-keyword">let</span> left = <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, rec(root.left));
+    <span class="hljs-keyword">let</span> right = <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, rec(root.right));
+    ans = <span class="hljs-built_in">Math</span>.max(ans, left + right + root.val);
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.max(left, right) + root.val;
+  &#125;
+  rec(root);
+  <span class="hljs-keyword">return</span> ans;
+&#125;;</code></pre></li>
+<li>添加终止条件<pre><code class="hljs javascript"><span class="hljs-keyword">var</span> maxPathSum = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root</span>) </span>&#123;
+    <span class="hljs-comment">// 后续遍历</span>
+  <span class="hljs-keyword">let</span> ans = <span class="hljs-built_in">Number</span>.MIN_SAFE_INTEGER;
+  <span class="hljs-keyword">const</span> rec = <span class="hljs-function">(<span class="hljs-params">root</span>) =&gt;</span> &#123;
+    <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">null</span>) &#123;
+      <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    &#125;
+    <span class="hljs-keyword">let</span> left = <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, rec(root.left));
+    <span class="hljs-keyword">let</span> right = <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, rec(root.right));
+    ans = <span class="hljs-built_in">Math</span>.max(ans, left + right + root.val);
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.max(left, right) + root.val;
+  &#125;
+  rec(root);
+  <span class="hljs-keyword">return</span> ans;
+&#125;;</code></pre>
+</li>
 </ol>
 
             </article>
