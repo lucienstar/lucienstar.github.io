@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>哈-回溯</title>
+    <link href="/2021/03/07/%E5%93%88-%E5%9B%9E%E6%BA%AF/"/>
+    <url>/2021/03/07/%E5%93%88-%E5%9B%9E%E6%BA%AF/</url>
+    
+    <content type="html"><![CDATA[<p>　　回溯算法采用了试错的思想，和分治很像，理论的区别不谈。做这种题目早期画出递归树(决策树)是个不错的选择。解决一个回溯问题，实际上就是一个决策树的遍历过程。考虑如下3个问题:</p><ol><li>路径</li><li>选择列表</li><li>结束条件<h3 id="全排列问题"><a href="#全排列问题" class="headerlink" title="全排列问题"></a>全排列问题</h3>　　题目:给定一个 没有重复 数字的序列，返回其所有可能的全排列。二话不说，先把决策树画出来。<br><img src="/imges/juece.jpg" srcset="/img/loading.gif" alt=""><br>　　 一开始，我们在决策的原点。我们需要做出抉择。对于1， 2， 3 来说，我们下一步可以走，1或者2或者3。当选择了一个数字后（也就是路径），那么就只能从下一轮中的选择列表里选择。比如选了1， 那么下一轮的选择列表就是2和3。我们的结束条件是选择列表的长度等于需要排列的数组长度。<pre><code class="hljs javascript"><span class="hljs-keyword">var</span> permute = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">nums</span>) </span>&#123;  <span class="hljs-comment">// 答案</span>  <span class="hljs-keyword">let</span> result = []  <span class="hljs-comment">// 选择列表</span>  <span class="hljs-keyword">let</span> track = []  <span class="hljs-keyword">const</span> backtrack = <span class="hljs-function">(<span class="hljs-params">nums, track</span>) =&gt;</span> &#123;    <span class="hljs-keyword">if</span>(track.length === nums.length) &#123;      result.push([...track]);      <span class="hljs-keyword">return</span>;    &#125;    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; nums.length; i++) &#123;      <span class="hljs-comment">// 重复去掉</span>      <span class="hljs-keyword">if</span>(track.includes(nums[i])) &#123;        <span class="hljs-keyword">continue</span>;      &#125;      <span class="hljs-comment">// 选择</span>      track.push(nums[i]);      backtrack(nums, track);      <span class="hljs-comment">// 撤销条件</span>      track.pop();    &#125;  &#125;  backtrack(nums, track);  <span class="hljs-keyword">return</span> result;&#125;;</code></pre></li></ol><p>决策过程类似这样。<br><img src="/imges/juece2.jpg" srcset="/img/loading.gif" alt=""></p><h3 id="分割回文串"><a href="#分割回文串" class="headerlink" title="分割回文串"></a>分割回文串</h3><p>　　给定一个字符串 s，将 s 分割成一些子串，使每个子串都是回文串。返回 s 所有可能的分割方案。这题还有动态规划的技巧，在这里不使用。  </p><p>　　还是考虑路径，路径就是我们的每一次的字符串，选择列表就是剩下来的字符串。对比回文字符串常用的就是双指针。  </p><pre><code class="javascript"><span class="keyword">var</span> partition = <span class="function"><span class="keyword">function</span> (<span class="params">s</span>) </span>{  <span class="keyword">const</span> res = [];  <span class="function"><span class="keyword">function</span> <span class="title">dfs</span>(<span class="params">temp, start</span>) </span>{    <span class="comment">// 结束条件</span>    <span class="keyword">if</span> (start == s.length) {      res.push(temp.slice());      <span class="keyword">return</span>;    }    <span class="keyword">for</span> (<span class="keyword">let</span> i = start; i &lt; s.length; i++) {      <span class="comment">// 满足条件</span>      <span class="keyword">if</span> (isPali(s, start, i)) {        temp.push(s.substring(start, i + <span class="number">1</span>));        dfs(temp, i + <span class="number">1</span>);        temp.pop();      }    }  }  dfs([], <span class="number">0</span>);  <span class="keyword">return</span> res;};<span class="comment">// 剪枝</span><span class="function"><span class="keyword">function</span> <span class="title">isPali</span>(<span class="params">s, l, r</span>) </span>{  <span class="keyword">while</span> (l &lt; r) {    <span class="keyword">if</span> (s[l] != s[r]) {      <span class="keyword">return</span> <span class="literal">false</span>;    }    l++;    r--;  }  <span class="keyword">return</span> <span class="literal">true</span>;}</code></pre>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>数据结构与算法</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>ECMA-执行上下文</title>
     <link href="/2021/02/20/ECMA-%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87/"/>
     <url>/2021/02/20/ECMA-%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87/</url>
