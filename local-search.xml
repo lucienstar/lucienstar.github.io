@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>工厂模式</title>
+    <link href="/2021/03/17/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/"/>
+    <url>/2021/03/17/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</url>
+    
+    <content type="html"><![CDATA[<p>　　之前也看过一些设计模式，但是都忘记了。那个时候并不理解设计模式有什么用，纯粹为了面试。但是随着自己写了一定复杂的业务的时候，发现自己的抽象能力和设计能力还是很差的，所以决定好好学习数据结构跟算法以及设计模式，特此记录。</p><h3 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h3><p>　　工厂模式属于创建型模式，将构造函数和创建者分离。</p><h3 id="示范"><a href="#示范" class="headerlink" title="示范"></a>示范</h3><pre><code class="hljs javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">slide</span> </span>&#123;  <span class="hljs-keyword">constructor</span>(name) &#123;    <span class="hljs-keyword">this</span>.name = <span class="hljs-string">'slide'</span>  &#125;&#125;<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Click</span> </span>&#123;  <span class="hljs-keyword">constructor</span>(name) &#123;    <span class="hljs-keyword">this</span>.name = <span class="hljs-string">'click'</span>  &#125;&#125;<span class="hljs-comment">// 工厂类</span><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Creator</span></span>&#123;  getCaptcha(name) &#123;    <span class="hljs-keyword">if</span>(name === <span class="hljs-string">'slide'</span>) &#123;      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Slide();    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(name === <span class="hljs-string">'click'</span>) &#123;      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Click();    &#125;  &#125;&#125;<span class="hljs-keyword">let</span> creator = <span class="hljs-keyword">new</span> Creator();<span class="hljs-keyword">let</span> slide = creator.getCaptcha(<span class="hljs-string">'slide'</span>)</code></pre><h3 id="理解"><a href="#理解" class="headerlink" title="理解"></a>理解</h3><p>　　创建和构造分离后，使用的人无需关系内部如何创建的，只用使用相同的工厂就行。但是新增一个<code>Product</code>类，就会多一些判断，难免有些冗余。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>设计模式</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>哈-回溯</title>
     <link href="/2021/03/07/%E5%93%88-%E5%9B%9E%E6%BA%AF/"/>
     <url>/2021/03/07/%E5%93%88-%E5%9B%9E%E6%BA%AF/</url>
