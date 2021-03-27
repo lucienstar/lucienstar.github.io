@@ -4,6 +4,82 @@
   
   
   <entry>
+    <title>装饰器模式</title>
+    <link href="/2021/03/21/%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F/"/>
+    <url>/2021/03/21/%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F/</url>
+    
+    <content type="html"><![CDATA[<p>　　装饰模式是一种结构型设计模式， 允许你通过将对象放入包含行为的特殊封装对象中来为原对象绑定新的行为。</p><h3 id="ES7"><a href="#ES7" class="headerlink" title="ES7"></a>ES7</h3><p>　　<code>ES7</code>支持了装饰器语法。</p><pre><code class="hljs javascript">@decorator<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Cat</span> </span>&#123;&#125;<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Dog</span> </span>&#123;    @decorator    run() &#123;&#125;&#125;</code></pre><p>　　和<code>class</code>一样，只是语法糖。通过<code>Object.defineProperty</code>方法，在类或者方法上加以“装饰“。所以会有一些<code>Babel</code>的插件方便在低版本浏览器支持这种语法。（所以如果不支持<code>Object.defineProperty</code>那就没办法了。😭可恶的我还要考虑IE8）</p><h3 id="理解"><a href="#理解" class="headerlink" title="理解"></a>理解</h3><p>　　装饰器这种元编程语法，还是挺好使的。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>设计模式</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>适配器模式</title>
+    <link href="/2021/03/21/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/"/>
+    <url>/2021/03/21/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/</url>
+    
+    <content type="html"><![CDATA[<p>　　适配器模式是一种结构型设计模式， 它能使接口不兼容的对象能够相互合作。</p><h3 id="axios"><a href="#axios" class="headerlink" title="axios"></a>axios</h3><p>　　在<code>axios</code>里，可以很明显的看到这种适配模式。<code>axios</code>里最终请求都是到<code>request</code>方法。然后返回一个<code>Promise</code>。</p><pre><code class="hljs javascript">Axios.prototype.request = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">request</span>(<span class="hljs-params">config</span>) </span>&#123;  ...  <span class="hljs-keyword">try</span> &#123;    promise = dispatchRequest(newConfig);  &#125; <span class="hljs-keyword">catch</span> (error) &#123;    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.reject(error);  &#125;&#125;</code></pre><p>　　最终，都是通过<code>dispatchRequest</code>来发送请求。</p><pre><code class="hljs javascript"><span class="hljs-keyword">var</span> adapter = config.adapter || defaults.adapter;<span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">dispatchRequest</span>(<span class="hljs-params">config</span>) </span>&#123;  <span class="hljs-keyword">return</span> adapter(config).then(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">onAdapterResolution</span>(<span class="hljs-params">response</span>) </span>&#123;    throwIfCancellationRequested(config);    <span class="hljs-comment">// Transform response data</span>    response.data = transformData(      response.data,      response.headers,      config.transformResponse    );    <span class="hljs-keyword">return</span> response;  &#125;, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">onAdapterRejection</span>(<span class="hljs-params">reason</span>) </span>&#123;    <span class="hljs-keyword">if</span> (!isCancel(reason)) &#123;      throwIfCancellationRequested(config);      <span class="hljs-comment">// Transform response data</span>      <span class="hljs-keyword">if</span> (reason &amp;&amp; reason.response) &#123;        reason.response.data = transformData(          reason.response.data,          reason.response.headers,          config.transformResponse        );      &#125;    &#125;    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.reject(reason);  &#125;);&#125;</code></pre><p>　　如果没有在<code>config</code>里传入自定义的适配器，就使用默认的适配器。默认的配置器会去判断<code>XMLHttpRequest</code>是否存在，存在就使用<code>xhr</code>,否则使用<code>http</code>这个库。来磨平浏览器和<code>Node</code>d=端的差异。所以axios浏览器端是只支持<code>xhr</code>的吗😐。  </p><pre><code class="hljs javascript"><span class="hljs-comment">// defaults.js</span><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getDefaultAdapter</span>(<span class="hljs-params"></span>) </span>&#123;  <span class="hljs-keyword">var</span> adapter;  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> XMLHttpRequest !== <span class="hljs-string">'undefined'</span>) &#123;    <span class="hljs-comment">// For browsers use XHR adapter</span>    adapter = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./adapters/xhr'</span>);  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> process !== <span class="hljs-string">'undefined'</span> &amp;&amp; <span class="hljs-built_in">Object</span>.prototype.toString.call(process) === <span class="hljs-string">'[object process]'</span>) &#123;    <span class="hljs-comment">// For node use HTTP adapter</span>    adapter = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./adapters/http'</span>);  &#125;  <span class="hljs-keyword">return</span> adapter;&#125;</code></pre><h3 id="理解"><a href="#理解" class="headerlink" title="理解　　"></a>理解　　</h3><p>　　适配器模式相当的OK，但是没到一定复杂度，不如直接修改代码来得快。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>设计模式</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>单例模式</title>
+    <link href="/2021/03/21/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/"/>
+    <url>/2021/03/21/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</url>
+    
+    <content type="html"><![CDATA[<p>　　单例模式是一种创建型设计模式， 让你能够保证一个类只有一个实例， 并提供一个访问该实例的全局节点。</p><h3 id="Vue插件"><a href="#Vue插件" class="headerlink" title="Vue插件"></a>Vue插件</h3><p>　　在<code>JS</code>中比较<code>hack</code>。在<code>Vuex</code>中，<code>Vuex</code>如果<code>use</code>了两次，就会提示错误。</p><pre><code class="hljs javascript"><span class="hljs-keyword">let</span> Vue <span class="hljs-comment">// bind on install</span><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">install</span> (<span class="hljs-params">_Vue</span>) </span>&#123;  <span class="hljs-keyword">if</span> (Vue &amp;&amp; _Vue === Vue) &#123;    <span class="hljs-keyword">if</span> (__DEV__) &#123;      <span class="hljs-built_in">console</span>.error(        <span class="hljs-string">'[vuex] already installed. Vue.use(Vuex) should be called only once.'</span>      )    &#125;    <span class="hljs-keyword">return</span>  &#125;  Vue = _Vue  applyMixin(Vue)&#125;</code></pre><h3 id="一个简单的示例代码"><a href="#一个简单的示例代码" class="headerlink" title="一个简单的示例代码"></a>一个简单的示例代码</h3><pre><code class="hljs javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">SingleInstance</span>(<span class="hljs-params"></span>) </span>&#123;&#125;SingleInstance.prototype.getInstance = (<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>&#123;  <span class="hljs-comment">// 定义自由变量instance，模拟私有变量</span>  <span class="hljs-keyword">let</span> instance = <span class="hljs-literal">null</span>  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>&#123;      <span class="hljs-comment">// 判断自由变量是否为null</span>      <span class="hljs-keyword">if</span>(!instance) &#123;          <span class="hljs-comment">// 如果为null则new出唯一实例</span>          instance = <span class="hljs-keyword">new</span> SingleInstance()      &#125;      <span class="hljs-keyword">return</span> instance    &#125;&#125;)()</code></pre><h3 id="理解"><a href="#理解" class="headerlink" title="理解"></a>理解</h3><p>　　提供了获得了一个指向该实例的全局访问节点，只会初始化一次。用户可能无感。但是违反了单一原则（单一职责，该模式同时解决了两个问题。）</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>设计模式</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>工厂模式</title>
+    <link href="/2021/03/17/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/"/>
+    <url>/2021/03/17/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</url>
+    
+    <content type="html"><![CDATA[<p>　　之前也看过一些设计模式，但是都忘记了。那个时候并不理解设计模式有什么用，纯粹为了面试。但是随着自己写了一定复杂的业务的时候，发现自己的抽象能力和设计能力还是很差的，所以决定好好学习数据结构跟算法以及设计模式，特此记录。</p><h3 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h3><p>　　工厂模式属于创建型模式，将构造函数和创建者分离。</p><h3 id="示范"><a href="#示范" class="headerlink" title="示范"></a>示范</h3><pre><code class="hljs javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">slide</span> </span>&#123;  <span class="hljs-keyword">constructor</span>(name) &#123;    <span class="hljs-keyword">this</span>.name = <span class="hljs-string">'slide'</span>  &#125;&#125;<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Click</span> </span>&#123;  <span class="hljs-keyword">constructor</span>(name) &#123;    <span class="hljs-keyword">this</span>.name = <span class="hljs-string">'click'</span>  &#125;&#125;<span class="hljs-comment">// 工厂类</span><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Creator</span></span>&#123;  getCaptcha(name) &#123;    <span class="hljs-keyword">if</span>(name === <span class="hljs-string">'slide'</span>) &#123;      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Slide();    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(name === <span class="hljs-string">'click'</span>) &#123;      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Click();    &#125;  &#125;&#125;<span class="hljs-keyword">let</span> creator = <span class="hljs-keyword">new</span> Creator();<span class="hljs-keyword">let</span> slide = creator.getCaptcha(<span class="hljs-string">'slide'</span>)</code></pre><h3 id="理解"><a href="#理解" class="headerlink" title="理解"></a>理解</h3><p>　　创建和构造分离后，使用的人无需关系内部如何创建的，只用使用相同的工厂就行。但是新增一个<code>Product</code>类，就会多一些判断，难免有些冗余。</p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>设计模式</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>ECMA-执行上下文</title>
     <link href="/2021/02/20/ECMA-%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87/"/>
     <url>/2021/02/20/ECMA-%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87/</url>

@@ -17,7 +17,7 @@
   <meta name="description" content="一个平庸的搬运工人">
   <meta name="author" content="lucienstar">
   <meta name="keywords" content="林间有风团队,狗屋建筑师,前端工程师">
-  <title>ECMA-执行上下文 - 我脑袋里的怪东西</title>
+  <title>单例模式 - 我脑袋里的怪东西</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -139,7 +139,7 @@
 </nav>
 
     <div class="view intro-2" id="background" parallax=true
-         style="background: url('/imges/ecma.jpg') no-repeat center center;
+         style="background: url('/imges/SingleInstance.png') no-repeat center center;
            background-size: cover;">
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
@@ -152,8 +152,8 @@
               
   <div class="mt-3 post-meta">
     <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-    <time datetime="2021-02-20 10:28">
-      2021年2月20日 上午
+    <time datetime="2021-03-21 15:13">
+      2021年3月21日 下午
     </time>
   </div>
 
@@ -163,7 +163,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      946 字
+      236 字
     </span>
   
 
@@ -173,7 +173,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      9
+      3
        分钟
     </span>
   
@@ -204,40 +204,38 @@
           <div class="post-content mx-auto" id="post">
             
             <article class="markdown-body">
-              <p>额，这个分享其实在12月份就做了，但是一直没来得及整理。现在整理下，也算是回顾下吧。在开篇之前，需要先记住下面两个概念，作用域和可执行环境。然后再来说说执行上下文，也就是执行环境。</p>
-<h3 id="作用域"><a href="#作用域" class="headerlink" title="作用域"></a>作用域</h3><p>　　为什么要有作用域?为了确定哪些变量，函数，对象可以访问，哪些不可以访问。所以作用域的作用就是定义在运行时代码中的某些特定部分中变量，函数和对象的可访问性。<br>　　作用域有两种实现，一种是词法作用域，一种是动态作用域。<code>javascript</code>使用的便是词法作用域。词法作用域的特征就是在静态词法分析阶段就决定了数据的可访问性。词法环境是词法作用域这一概念的运行期概念。我们在上一次<a href="https://lucienstar.github.io/2020/11/13/ECMA-%E8%AF%8D%E6%B3%95%E7%8E%AF%E5%A2%83/" target="_blank" rel="noopener">ECMA 词法环境</a>有介绍到这部分的内容。</p>
-<h3 id="执行环境"><a href="#执行环境" class="headerlink" title="执行环境"></a>执行环境</h3><p>　　一个执行环境由三部分组成</p>
-<ol>
-<li>词法环境组件:指定一个词法环境对象，用于解析该执行环境内的代码创建的标识符引用</li>
-<li>变量环境组件:指定一个词法环境对象，其环境数据用于保存由该执行环境内的代码通过 VariableStatement 和 FunctionDeclaration 创建的绑定</li>
-<li>this 绑定: 指定该执行环境内的 ECMA 脚本代码中 this 关键字所关联的值</li>
-</ol>
-<h3 id="可执行代码"><a href="#可执行代码" class="headerlink" title="可执行代码"></a>可执行代码</h3><p>　　ECMA5共有3种可执行代码，Eval比较复杂，暂且不说。当控制流进入可执行代码的时候，就会有产生一个执行环境</p>
-<ol>
-<li>全局代码</li>
-<li>Eval 代码</li>
-<li>函数代码</li>
-</ol>
-<h3 id="全局代码"><a href="#全局代码" class="headerlink" title="全局代码"></a>全局代码</h3><p>　　当控制流进入全局代码的执行环境时，执行以下步骤：</p>
-<ul>
-<li>初始化执行环境。</li>
-<li>将 变量环境组件设置为全局环境(一个outer为null的特殊的词法环境，环境记录项是对象环境记录项)。</li>
-<li>将 词法环境组件设置为全局环境。</li>
-<li>将 this绑定设置为全局对象。</li>
-<li>执行声明式绑定初始化化步骤:当在一个执行环境下评估一段 ECMA 脚本时，变量和函数定义会以绑定的形式添加到这个 变量环境组件 的环境记录中。对于函数代码，参数也同样会以绑定的形式添加到这个 变量环境组件 的环境记录中。针对以下例子， </li>
-</ul>
-<p><img src="/imges/excute_example1.png" srcset="/img/loading.gif" alt="">  </p>
-<p>　　在进去全局代码，还没有执行函数的时候，会产生如下执行环境<br><img src="/imges/excute_example2.png" srcset="/img/loading.gif" alt="">   </p>
-<h3 id="函数代码"><a href="#函数代码" class="headerlink" title="函数代码"></a>函数代码</h3><p>　　当控制流根据一个函数对象 F、调用者提供的 thisArg 以及调用者提供的 argumentList，进入函数代码的执行环境时，执行以下步骤： </p>
-<ol>
-<li>如果函数代码是严格模式下的代码，设 this 绑定 为 thisArg(代表函数的 apply，call，bind 等函数的设置 this 绑定的参数)。</li>
-<li>否则如果 thisArg 是 null 或 undefined，则设 this 绑定 为全局对象。否则如果 Type(thisArg) 的结果不为 Object，则设 this 绑定 为 ToObject(thisArg)。</li>
-<li>否则设 this 绑定 为 thisArg。<br>以 F 的 [[Scope]] 内部属性(scope保存了当前的词法环境)为参数调用 NewDeclarativeEnvironment，并令 localEnv 为调用的结果。</li>
-<li>设 词法环境组件 为 localEnv。</li>
-<li>设 变量环境组件 为 localEnv。</li>
-<li>令 code 为 F 的 [[Code]] 内部属性的值。</li>
-<li>使用函数代码 code 和 argumentList 执行声明式绑定初始化化步骤。<br>　　还是上面那个例子，在执行函数的时候，会产生如下效果。这里图画得不太好，注意区分词法分析阶段和执行阶段。我这里画在一起了。<br><img src="/imges/excute_example3.png" srcset="/img/loading.gif" alt=""> </li>
-</ol>
+              <p>　　单例模式是一种创建型设计模式， 让你能够保证一个类只有一个实例， 并提供一个访问该实例的全局节点。</p>
+<h3 id="Vue插件"><a href="#Vue插件" class="headerlink" title="Vue插件"></a>Vue插件</h3><p>　　在<code>JS</code>中比较<code>hack</code>。在<code>Vuex</code>中，<code>Vuex</code>如果<code>use</code>了两次，就会提示错误。</p>
+<pre><code class="hljs javascript"><span class="hljs-keyword">let</span> Vue <span class="hljs-comment">// bind on install</span>
+<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">install</span> (<span class="hljs-params">_Vue</span>) </span>&#123;
+  <span class="hljs-keyword">if</span> (Vue &amp;&amp; _Vue === Vue) &#123;
+    <span class="hljs-keyword">if</span> (__DEV__) &#123;
+      <span class="hljs-built_in">console</span>.error(
+        <span class="hljs-string">'[vuex] already installed. Vue.use(Vuex) should be called only once.'</span>
+      )
+    &#125;
+    <span class="hljs-keyword">return</span>
+  &#125;
+  Vue = _Vue
+  applyMixin(Vue)
+&#125;</code></pre>
+<h3 id="一个简单的示例代码"><a href="#一个简单的示例代码" class="headerlink" title="一个简单的示例代码"></a>一个简单的示例代码</h3><pre><code class="hljs javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">SingleInstance</span>(<span class="hljs-params"></span>) </span>&#123;
+
+&#125;
+
+SingleInstance.prototype.getInstance = (<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>&#123;
+  <span class="hljs-comment">// 定义自由变量instance，模拟私有变量</span>
+  <span class="hljs-keyword">let</span> instance = <span class="hljs-literal">null</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>&#123;
+      <span class="hljs-comment">// 判断自由变量是否为null</span>
+      <span class="hljs-keyword">if</span>(!instance) &#123;
+          <span class="hljs-comment">// 如果为null则new出唯一实例</span>
+          instance = <span class="hljs-keyword">new</span> SingleInstance()
+      &#125;
+      <span class="hljs-keyword">return</span> instance
+    &#125;
+&#125;)()</code></pre>
+<h3 id="理解"><a href="#理解" class="headerlink" title="理解"></a>理解</h3><p>　　提供了获得了一个指向该实例的全局访问节点，只会初始化一次。用户可能无感。但是违反了单一原则（单一职责，该模式同时解决了两个问题。）</p>
 
             </article>
             <hr>
@@ -248,7 +246,7 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86/">前端知识</a>
+                      <a class="hover-with-bg" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
                     
                   </div>
                 
@@ -261,9 +259,9 @@
                   <div class="post-prev col-6">
                     
                     
-                      <a href="/2021/03/17/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/">
+                      <a href="/2021/03/21/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">工厂模式</span>
+                        <span class="hidden-mobile">适配器模式</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -271,8 +269,8 @@
                   <div class="post-next col-6">
                     
                     
-                      <a href="/2020/11/13/ECMA-%E8%AF%8D%E6%B3%95%E7%8E%AF%E5%A2%83/">
-                        <span class="hidden-mobile">ECMA 词法环境</span>
+                      <a href="/2021/03/17/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/">
+                        <span class="hidden-mobile">工厂模式</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -411,7 +409,7 @@
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "ECMA-执行上下文&nbsp;",
+        "单例模式&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,
